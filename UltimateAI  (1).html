@@ -1,0 +1,435 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltimateAI Dashboard & Public View</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Ellipsis Menu Button -->
+    <div class="menu">
+        <div class="menu-button" onclick="toggleMenu()">⋮</div>
+        <div class="menu-options" id="menu-options">
+            <div onclick="showHome()">Home</div> <!-- Added Home option -->
+            <div onclick="openGamesDashboard()">Games</div>
+            <div onclick="openLoginDashboard()">Login</div>
+            <div onclick="openOfficeDashboard()">Office</div>
+            <div onclick="openFacebook()">Facebook</div>
+            <div onclick="openInstagram()">Instagram</div>
+            <div onclick="openWikipedia()">Wikipedia</div>
+            <div onclick="openChatGPT()">ChatGPT</div>
+            <div onclick="openGoogleSearch()">Google Search</div>
+        </div>
+    </div>
+
+    <!-- Games Dashboard (Hidden by default) -->
+    <div id="games-dashboard" class="hidden">
+        <h2>Games</h2>
+        <ul>
+            <li onclick="openChess()">Chess</li>
+            <li onclick="openPoketab()">Pokétab</li>
+            <li onclick="openRunOnMarch()">Run on March</li>
+        </ul>
+        <button onclick="closeDashboard()">Back</button>
+    </div>
+
+    <!-- Login Dashboard (Hidden by default) -->
+    <div id="login-dashboard" class="hidden">
+        <h2>Owner Login</h2>
+        <div class="error-message" id="login-error">Invalid credentials. Please try again.</div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Enter your username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <button onclick="login()">Login</button>
+        <button onclick="closeDashboard()">Back</button>
+    </div>
+
+    <!-- Office Dashboard (Hidden by default) -->
+    <div id="office-dashboard" class="hidden">
+        <h2>Office</h2>
+        <ul>
+            <li onclick="openOfficeApp('uKeep Notes')">uKeep Notes</li>
+            <li onclick="openOfficeApp('uExcel')">uExcel</li>
+            <li onclick="openOfficeApp('uPowerPoint')">uPowerPoint</li>
+        </ul>
+        <button onclick="closeDashboard()">Back</button>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="container">
+        <h1>UltimateAI Dashboard</h1>
+        
+        <!-- Public View Section -->
+        <div id="public-view-section">
+            <h2>Views of Today: <span id="public-views">0</span></h2>
+            <h3>Current Users on Site: <span id="current-users">0</span></h3>
+            <h2>Published Posts</h2>
+            <div id="public-posts"></div>
+        </div>
+
+        <!-- Dashboard Section (Hidden by default) -->
+        <div id="dashboard-section" class="hidden">
+            
+            <!-- Set Number of Views (Hidden before login) -->
+            <div id="views-update-section" class="hidden">
+                <label for="view-count">Update Views of Today:</label>
+                <input type="number" id="view-count" min="0" value="0">
+                <button onclick="updateViews()">Update Views</button>
+                <h3>Views of Today: <span id="views">0</span></h3>
+            </div>
+
+            <!-- Post Something -->
+            <h2>Post Something</h2>
+            <label for="post-title">Post Title:</label>
+            <input type="text" id="post-title" placeholder="Enter post title" required>
+            <label for="post-content">Post Content:</label>
+            <textarea id="post-content" placeholder="Enter post content" rows="5" required></textarea>
+            <button onclick="postContent()">Post</button>
+            
+            <!-- File Upload -->
+            <h2>Upload Media or Files</h2>
+            <label for="file-upload">Choose a file:</label>
+            <input type="file" id="file-upload">
+            <button onclick="uploadFile()">Upload File</button>
+            
+            <!-- Display Posts -->
+            <h2>Published Posts</h2>
+            <div id="posts"></div>
+
+            <!-- Logout -->
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
+<style>/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Menu Styling */
+.menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-options {
+    display: none;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+    margin-top: 10px;
+    z-index: 1;
+}
+
+.menu-options div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.menu-options div:hover {
+    background-color: #f4f4f4;
+}
+
+/* Dashboard hidden initially */
+.hidden {
+    display: none;
+}
+
+/* Container for all content */
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Form elements styling */
+input[type="text"], input[type="password"], input[type="number"], textarea, input[type="file"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Error message styling */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+/* Posts section */
+.post {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.post h3 {
+    margin-top: 0;
+}
+
+.post button {
+    background-color: #FF4136;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.post button:hover {
+    background-color: #FF5733;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+
+    input[type="text"], input[type="password"], input[type="number"], textarea, button, input[type="file"] {
+        font-size: 14px;
+    }
+}
+</style><script>// Updated login credentials
+const ownerUsername = "Yeanur@2006";
+const ownerPassword = "ye2006";
+
+// Variables to store the state
+let currentViewCount = 0;
+let posts = [];
+let isLoggedIn = false; // Track login state
+
+// Show the public view section when the page loads
+document.getElementById('public-view-section').style.display = 'block';
+
+// Function to toggle the three-dot menu
+function toggleMenu() {
+    const menuOptions = document.getElementById('menu-options');
+    menuOptions.style.display = menuOptions.style.display === 'block' ? 'none' : 'block';
+}
+
+// Function to open the Games Dashboard
+function openGamesDashboard() {
+    closeAllDashboards();
+    document.getElementById('games-dashboard').style.display = 'block';
+}
+
+// Function to open the Login Dashboard (Owner Login)
+function openLoginDashboard() {
+    closeAllDashboards();
+    document.getElementById('login-dashboard').style.display = 'block';
+}
+
+// Function to open the Office Dashboard
+function openOfficeDashboard() {
+    closeAllDashboards();
+    document.getElementById('office-dashboard').style.display = 'block';
+}
+
+// Function to return to the Home section (public view)
+function showHome() {
+    closeAllDashboards();
+    document.getElementById('public-view-section').style.display = 'block';
+}
+
+// Function to close all open dashboards and hide them
+function closeAllDashboards() {
+    document.getElementById('public-view-section').style.display = 'none';
+    document.getElementById('login-dashboard').style.display = 'none';
+    document.getElementById('dashboard-section').style.display = 'none';
+    document.getElementById('games-dashboard').style.display = 'none';
+    document.getElementById('office-dashboard').style.display = 'none';
+}
+
+// Function to update the public view with the latest data
+function updatePublicView() {
+    // Update the "Views of Today" count display
+    document.getElementById('public-views').textContent = currentViewCount;
+
+    // Update the "Current Users on Site" display with a random value between 10% and 35% of the current views
+    const currentUsers = Math.floor(Math.random() * (35 - 10 + 1) + 10); // Random percentage between 10% and 35%
+    document.getElementById('current-users').textContent = Math.floor(currentViewCount * (currentUsers / 100));
+
+    // Update the posts display
+    const publicPostsSection = document.getElementById('public-posts');
+    publicPostsSection.innerHTML = ''; // Clear previous content
+
+    // Display each post in the public view
+    posts.forEach((post, index) => {
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+        postElement.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.content}</p>
+            <button onclick="deletePost(${index})">Delete</button>`;
+
+        // If the post contains a file, add a link to the file
+        if (post.file) {
+            postElement.innerHTML += `<a href="${post.file.url}" target="_blank">${post.file.name}</a>`;
+        }
+
+        publicPostsSection.appendChild(postElement);
+    });
+}
+
+// Function to handle login
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (username === ownerUsername && password === ownerPassword) {
+        isLoggedIn = true;
+        document.getElementById('views-update-section').classList.remove('hidden'); // Show the views update section after login
+        closeAllDashboards();
+        document.getElementById('dashboard-section').style.display = 'block'; // Show the dashboard section
+        document.getElementById('login-error').style.display = 'none'; // Hide login error if any
+        updatePublicView(); // Update public view with latest data
+    } else {
+        document.getElementById('login-error').style.display = 'block'; // Show error message if login fails
+    }
+}
+
+// Function to update the "Views of Today" count
+function updateViews() {
+    if (!isLoggedIn) {
+        alert("Please log in to update views.");
+        return;
+    }
+
+    const viewCount = document.getElementById('view-count').value;
+    currentViewCount = viewCount;
+    document.getElementById('views').textContent = viewCount;
+    updatePublicView(); // Update the public view after changing the view count
+}
+
+// Function to handle adding a new post
+function postContent() {
+    const postTitle = document.getElementById('post-title').value;
+    const postContent = document.getElementById('post-content').value;
+
+    if (postTitle.trim() && postContent.trim()) {
+        const post = {
+            title: postTitle,
+            content: postContent
+        };
+        posts.unshift(post); // Add the new post to the start of the posts array
+
+        // Update the owner's posts view
+        const postsSection = document.getElementById('posts');
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+        postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p><button onclick="deletePost(0)">Delete</button>`;
+        postsSection.prepend(postElement);
+
+        // Update the public view
+        updatePublicView();
+
+        // Clear the input fields
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-content').value = '';
+    } else {
+        alert('Please fill in both the title and content fields.');
+    }
+}
+
+// Function to handle file upload
+function uploadFile() {
+    const fileInput = document.getElementById('file-upload');
+    const file = fileInput.files[0];
+
+    if (file) {
+        const post = {
+            title: file.name,
+            content: '',
+            file: {
+                name: file.name,
+                url: URL.createObjectURL(file) // Create a URL for the uploaded file
+            }
+        };
+        posts.unshift(post); // Add the new file post to the start of the posts array
+
+        // Update the owner's posts view
+        const postsSection = document.getElementById('posts');
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+        postElement.innerHTML = `<h3>${post.title}</h3><a href="${post.file.url}" target="_blank">${post.file.name}</a><button onclick="deletePost(0)">Delete</button>`;
+        postsSection.prepend(postElement);
+
+        // Update the public view
+        updatePublicView();
+
+        // Clear the file input
+        fileInput.value = '';
+    } else {
+        alert('Please select a file to upload.');
+    }
+}
+
+// Function to delete a post
+function deletePost(index) {
+    posts.splice(index, 1); // Remove the post from the array
+    updatePublicView(); // Update the public view after deletion
+}
+
+// Function to log out the owner
+function logout() {
+    isLoggedIn = false;
+    document.getElementById('views-update-section').classList.add('hidden'); // Hide the views update section after logout
+    closeAllDashboards();
+    document.getElementById('login-dashboard').style.display = 'block';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+}
+
+// Automatically update the "Current Users on Site" every 5 seconds
+setInterval(() => {
+    updatePublicView();
+}, 5000);
+
+// Initialize the public view with the latest data on page load
+updatePublicView();
+</script>
